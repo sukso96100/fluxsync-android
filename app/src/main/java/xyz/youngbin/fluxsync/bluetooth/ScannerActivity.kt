@@ -47,13 +47,18 @@ class ScannerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
          setContentView(R.layout.activity_scanner)
 
-
-
         // Setup RecyclerView
         mDatas = ArrayList<BluetoothDeviceInfo>()
         mLayoutManager = LinearLayoutManager(this)
         list.layoutManager = mLayoutManager
-        mAdapter = BluetoothDeviceListAdapter(mDatas, this)
+
+        mAdapter = BluetoothDeviceListAdapter(mDatas, this, View.OnClickListener {
+            v: View ->
+            val position = list.getChildAdapterPosition(v)
+            var connectIntent = Intent(this, ConnectActivity::class.java)
+            connectIntent.putExtra("address", mDatas[position].address)
+            startActivity(connectIntent)
+        })
         list.adapter = mAdapter
 
         //Check if bluetooth is on
@@ -72,6 +77,7 @@ class ScannerActivity : AppCompatActivity() {
                 scanDevices()
             }
         }
+
 
 
     }
@@ -141,14 +147,17 @@ class ScannerActivity : AppCompatActivity() {
     data class BluetoothDeviceInfo(var name: String, var address: String, var isPaired: Boolean)
 
     // Adapter for Scanned Device list
-    class BluetoothDeviceListAdapter(dataSet: ArrayList<BluetoothDeviceInfo>, context: Context)
+    class BluetoothDeviceListAdapter
+    (dataSet: ArrayList<BluetoothDeviceInfo>, context: Context, listener: View.OnClickListener)
         : RecyclerView.Adapter<BluetoothDeviceListAdapter.ViewHolder>() {
         var mDataSet: ArrayList<BluetoothDeviceInfo>
         var mContext: Context
+        var mListener: View.OnClickListener
 
         init {
             mDataSet = dataSet
             mContext = context
+            mListener = listener
         }
 
         // Returns count of data
@@ -166,13 +175,16 @@ class ScannerActivity : AppCompatActivity() {
             }
             holder?.txtTitle?.text = item.name
             holder?.txtInfo?.text = "${status} | ${item.address}"
+            holder?.item?.setOnClickListener(mListener)
 
         }
 
         class ViewHolder(v: View) : RecyclerView.ViewHolder(v){
+            var item: View
             var txtTitle: TextView
             var txtInfo: TextView
             init {
+                item = v
                 txtTitle = v.findViewById(R.id.name) as TextView
                 txtInfo = v.findViewById(R.id.info) as TextView
             }

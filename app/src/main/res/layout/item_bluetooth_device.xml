@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:padding="4dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/name"
@@ -14,7 +18,7 @@
             android:layout_alignParentTop="true"
             android:text="Name"
             android:padding="4dp"
-            android:textSize="24sp"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/info"
