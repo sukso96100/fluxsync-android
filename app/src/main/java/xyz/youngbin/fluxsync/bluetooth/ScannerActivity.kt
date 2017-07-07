@@ -53,13 +53,25 @@ class ScannerActivity : AppCompatActivity() {
         list.layoutManager = mLayoutManager
 
         mAdapter = BluetoothDeviceListAdapter(mDatas, this, View.OnClickListener {
+            // On device selected
             v: View ->
             val position = list.getChildAdapterPosition(v)
             var connectIntent = Intent(this, ConnectActivity::class.java)
             connectIntent.putExtra("address", mDatas[position].address)
+            connectIntent.putExtra("name", mDatas[position].name)
             startActivity(connectIntent)
         })
         list.adapter = mAdapter
+
+        cancel.setOnClickListener{
+            finish()
+        }
+
+        refresh.setOnClickListener{
+            if(!isScanning){
+                scanDevices()
+            }
+        }
 
         //Check if bluetooth is on
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -99,21 +111,6 @@ class ScannerActivity : AppCompatActivity() {
         }catch (e: IllegalArgumentException ){
             e.printStackTrace()
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.scanner, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            R.id.refresh ->
-                if(!isScanning){
-                    scanDevices()
-                }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     // Scans devices

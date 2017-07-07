@@ -4,13 +4,22 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="activity_scanner">New Connection</string>
+    <string name="activity_scanner_desc">
+        - Turn Bluetooth of each device on.\n
+        - Open FluxSync on desktop(or laptop) then click new connection.\n
+        - Choose your desktop(or laptop) from below.</string>
+    <string name="activity_connect">Connecting in progress</string>
+    <string name="activity_connect_desc">On your FluxSync desktop app, select this phone(or tablet).</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="bluetooth_status_scanning">Scanning...</string>
-    <string name="bluetooth_status_scanned">Done! Select your device.</string>
+    <string name="bluetooth_status_scanned">Scanned.</string>
     <string name="bluetooth_paired">Paired</string>
     <string name="bluetooth_not_paired">Not paired</string>
+    <string name="bluetooth_connecting">Waiting for %s</string>
 
+    <string name="cancel">Cancel</string>
     <string name="refresh">Refresh</string>
     <string name="permission_bluetooth">To connect with Desktop(or Laptop), Bluetooth permission is required.</string>
 </resources>

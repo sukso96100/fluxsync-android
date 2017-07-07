@@ -1,23 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="xyz.youngbin.fluxsync.bluetooth.ScannerActivity">
-    <LinearLayout
+    tools:context="xyz.youngbin.fluxsync.bluetooth.ScannerActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/activity_scanner"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:padding="4dp"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/title"
+        android:text="@string/activity_scanner_desc"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:padding="4dp"/>
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/desc"
+        android:text="@string/bluetooth_status_scanning"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:padding="4dp"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/refresh"
+        android:layout_alignBottom="@+id/refresh"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:backgroundTint="@android:color/white"
+        android:text="@string/cancel" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="@string/refresh"
+        android:textColor="@android:color/white" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:padding="8dp"/>
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            android:id="@+id/list"/>
-    </LinearLayout>
-</layout>
+        android:layout_above="@+id/cancel"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/status" />
+
+</RelativeLayout>

@@ -27,8 +27,12 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".bluetooth.ConnectActivity" />
-        <activity android:name=".bluetooth.ScannerActivity"></activity>
+        <activity android:name=".bluetooth.ConnectActivity"
+            android:theme="@style/AppTheme.NoToolbar"
+            android:label="@string/activity_connect"/>
+        <activity android:name=".bluetooth.ScannerActivity"
+            android:theme="@style/AppTheme.NoToolbar"
+            android:label="@string/activity_scanner"/>
     </application>
 
 </manifest>
