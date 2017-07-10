@@ -17,7 +17,12 @@
     <string name="bluetooth_status_scanned">Scanned.</string>
     <string name="bluetooth_paired">Paired</string>
     <string name="bluetooth_not_paired">Not paired</string>
-    <string name="bluetooth_connecting">Waiting for %s</string>
+    <string name="bluetooth_preparing">Preparing for connection</string>
+    <string name="bluetooth_waiting">Waiting for %s</string>
+    <string name="bluetooth_connecting">Connecting with %s</string>
+    <string name="bluetooth_connected">Connected with %s</string>
+    <string name="bluetooth_disconnected">Disconnected</string>
+    <string name="bluetooth_failed">Connection failed</string>
 
     <string name="cancel">Cancel</string>
     <string name="refresh">Refresh</string>

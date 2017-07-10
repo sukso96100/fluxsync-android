@@ -52,6 +52,7 @@ class ScannerActivity : AppCompatActivity() {
         mLayoutManager = LinearLayoutManager(this)
         list.layoutManager = mLayoutManager
 
+        // Set Adapter on RecyclerView
         mAdapter = BluetoothDeviceListAdapter(mDatas, this, View.OnClickListener {
             // On device selected
             v: View ->

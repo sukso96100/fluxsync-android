@@ -30,5 +30,8 @@ class Util{
                 }
             }
         }
+
+        val connectionStepFilter = "xyz.youngbin.fluxsync.CONNECTION_STEP"
+        val connectionStatusCodes = arrayOf("preparing","waiting","connecting","connected","disconnected","failed")
     }
 }
