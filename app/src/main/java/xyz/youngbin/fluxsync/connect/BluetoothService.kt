@@ -1,21 +1,17 @@
-package xyz.youngbin.fluxsync.bluetooth
+package xyz.youngbin.fluxsync.connect
 
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.AsyncTask
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import xyz.youngbin.fluxsync.Util
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.nio.Buffer
-import java.util.*
 
 class BluetoothService : Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -32,6 +28,7 @@ class BluetoothService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("BluetoothService","Creating Service...")
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mLocalBM = LocalBroadcastManager.getInstance(this)
     }
@@ -44,6 +41,7 @@ class BluetoothService : Service() {
                 broadcastStatus(0)
                 mAddress = intent!!.getStringExtra("address")
                 if(!connected){
+                    cancelTasks()
                     ConnectTask().execute()
                 }
             }
@@ -62,10 +60,13 @@ class BluetoothService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mSocket.close()
-        ConnectTask().cancel(true)
-        ReadTask().cancel(true)
-        WriteTask().cancel(true)
+
+        try {
+            mSocket.close()
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        cancelTasks()
         broadcastStatus(4)
     }
 
@@ -73,12 +74,14 @@ class BluetoothService : Service() {
         override fun doInBackground(vararg params: Unit?): BluetoothSocket {
             broadcastStatus(1)
             val mServerSocket = mBluetoothAdapter
-                    .listenUsingRfcommWithServiceRecord("Serial", UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+                    .listenUsingRfcommWithServiceRecord("Serial", Util.bluetoothSerialServiceUUID)
             while (true){
+                Log.d("BluetoothService","Waiting for connection...")
                 var socket = mServerSocket.accept()
                 if(socket != null && (socket.remoteDevice.address == mAddress)){
                     socket.close()
                     broadcastStatus(2)
+                    Log.d("BluetoothService", "Connected")
                     return socket
                 }else{
                     socket.close()
@@ -139,6 +142,13 @@ class BluetoothService : Service() {
         val intent = Intent(Util.connectionStepFilter)
         intent.putExtra("status",Util.connectionStatusCodes[statusCode])
         mLocalBM.sendBroadcast(intent)
+    }
+
+    fun cancelTasks(){
+        Log.d("BluetoothService", "Canceling tasks")
+        ConnectTask().cancel(true)
+        ReadTask().cancel(true)
+        WriteTask().cancel(true)
     }
 
 

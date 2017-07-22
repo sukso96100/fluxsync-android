@@ -6,23 +6,27 @@
 
     <string name="activity_scanner">New Connection</string>
     <string name="activity_scanner_desc">
-        - Turn Bluetooth of each device on.\n
+        - Connect to the network where your desktop(or laptop) is connected.\n
         - Open FluxSync on desktop(or laptop) then click new connection.\n
         - Choose your desktop(or laptop) from below.</string>
     <string name="activity_connect">Connecting in progress</string>
-    <string name="activity_connect_desc">On your FluxSync desktop app, select this phone(or tablet).</string>
+    <string name="activity_connect_desc">
+        - On your FluxSync desktop app, choose %s.\n
+        - Then, Scan the QR Code to connect.\n
+        - Click "Cancel" or close this screen to cancel connection.</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="bluetooth_status_scanning">Scanning...</string>
-    <string name="bluetooth_status_scanned">Scanned.</string>
-    <string name="bluetooth_paired">Paired</string>
-    <string name="bluetooth_not_paired">Not paired</string>
+    <string name="device_status_scanning">Scanning...</string>
+    <string name="device_status_scanned">Scanned.</string>
     <string name="bluetooth_preparing">Preparing for connection</string>
     <string name="bluetooth_waiting">Waiting for %s</string>
     <string name="bluetooth_connecting">Connecting with %s</string>
     <string name="bluetooth_connected">Connected with %s</string>
     <string name="bluetooth_disconnected">Disconnected</string>
     <string name="bluetooth_failed">Connection failed</string>
+    <string name="bluetooth_canceling">Canceling connection</string>
+
+    <string name="wifi_info_on">Turning Wifi on. Wifi must be turned on to use FluxSync.</string>
 
     <string name="cancel">Cancel</string>
     <string name="refresh">Refresh</string>

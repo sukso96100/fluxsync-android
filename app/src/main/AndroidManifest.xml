@@ -3,7 +3,11 @@
     package="xyz.youngbin.fluxsync">
 
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +15,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".FluxSyncApp">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -23,16 +28,19 @@
         </activity>
 
         <service
-            android:name=".bluetooth.BluetoothService"
+            android:name=".connect.BluetoothService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".bluetooth.ConnectActivity"
-            android:theme="@style/AppTheme.NoToolbar"
-            android:label="@string/activity_connect"/>
-        <activity android:name=".bluetooth.ScannerActivity"
-            android:theme="@style/AppTheme.NoToolbar"
-            android:label="@string/activity_scanner"/>
+        <activity
+            android:name=".connect.ConnectActivity"
+            android:label="@string/activity_connect"
+            android:theme="@style/AppTheme.NoToolbar" />
+        <activity
+            android:name=".connect.ScannerActivity"
+            android:label="@string/activity_scanner"
+            android:theme="@style/AppTheme.NoToolbar" />
+        <activity android:name=".connect.TokenQRScannerActivity"></activity>
     </application>
 
 </manifest>

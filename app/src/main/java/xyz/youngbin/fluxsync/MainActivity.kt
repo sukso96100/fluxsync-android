@@ -2,6 +2,7 @@ package xyz.youngbin.fluxsync
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +39,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         mAdapter = MainPagerAdapter(supportFragmentManager)
         mPager = findViewById(R.id.pager) as ViewPager
         mPager.adapter = mAdapter

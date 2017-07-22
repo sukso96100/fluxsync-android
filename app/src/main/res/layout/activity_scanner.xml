@@ -3,7 +3,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="xyz.youngbin.fluxsync.bluetooth.ScannerActivity"
+    tools:context="xyz.youngbin.fluxsync.connect.ScannerActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/desc"
-        android:text="@string/bluetooth_status_scanning"
+        android:text="@string/device_status_scanning"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:padding="4dp"/>
 
