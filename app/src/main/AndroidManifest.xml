@@ -40,7 +40,8 @@
             android:name=".connect.ScannerActivity"
             android:label="@string/activity_scanner"
             android:theme="@style/AppTheme.NoToolbar" />
-        <activity android:name=".connect.TokenQRScannerActivity"></activity>
+        <activity android:name=".connect.TokenQRScannerActivity"
+            android:theme="@style/AppTheme.NoToolbar"/>
     </application>
 
 </manifest>
