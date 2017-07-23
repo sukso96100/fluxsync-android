@@ -13,7 +13,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class BluetoothService : Service() {
+class ConnectionService : Service() {
     override fun onBind(intent: Intent?): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -28,7 +28,7 @@ class BluetoothService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("BluetoothService","Creating Service...")
+        Log.d("ConnectionService","Creating Service...")
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mLocalBM = LocalBroadcastManager.getInstance(this)
     }
@@ -76,12 +76,12 @@ class BluetoothService : Service() {
             val mServerSocket = mBluetoothAdapter
                     .listenUsingRfcommWithServiceRecord("Serial", Util.bluetoothSerialServiceUUID)
             while (true){
-                Log.d("BluetoothService","Waiting for connection...")
+                Log.d("ConnectionService","Waiting for connection...")
                 var socket = mServerSocket.accept()
                 if(socket != null && (socket.remoteDevice.address == mAddress)){
                     socket.close()
                     broadcastStatus(2)
-                    Log.d("BluetoothService", "Connected")
+                    Log.d("ConnectionService", "Connected")
                     return socket
                 }else{
                     socket.close()
@@ -145,7 +145,7 @@ class BluetoothService : Service() {
     }
 
     fun cancelTasks(){
-        Log.d("BluetoothService", "Canceling tasks")
+        Log.d("ConnectionService", "Canceling tasks")
         ConnectTask().cancel(true)
         ReadTask().cancel(true)
         WriteTask().cancel(true)

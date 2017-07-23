@@ -16,18 +16,18 @@
         - Click "Cancel" or close this screen to cancel connection.</string>
     <string name="activity_qr_desc">Scan QR Code to continue</string>
     <string name="qr_found">Found QR Code!</string>
-    <string name="qt_invalid">Not a valid QR Code</string>
+    <string name="qr_invalid">Invalid QR Code! Please scan again</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="device_status_scanning">Scanning...</string>
     <string name="device_status_scanned">Scanned.</string>
-    <string name="bluetooth_preparing">Preparing for connection</string>
-    <string name="bluetooth_waiting">Waiting for %s</string>
-    <string name="bluetooth_connecting">Connecting with %s</string>
-    <string name="bluetooth_connected">Connected with %s</string>
-    <string name="bluetooth_disconnected">Disconnected</string>
-    <string name="bluetooth_failed">Connection failed</string>
-    <string name="bluetooth_canceling">Canceling connection</string>
+    <string name="connection_preparing">Preparing for connection</string>
+    <string name="connection_scanning">Scanning QR Code</string>
+    <string name="connection_connecting">Connecting with %s</string>
+    <string name="connection_connected">Connected with %s</string>
+    <string name="connection_disconnected">Disconnected</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="connection_canceling">Canceling connection</string>
 
     <string name="wifi_info_on">Turning Wifi on. Wifi must be turned on to use FluxSync.</string>
 

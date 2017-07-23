@@ -1,11 +1,18 @@
 package xyz.youngbin.fluxsync.connect
 
+import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParseException
+import com.google.gson.JsonParser
 import com.google.zxing.Result
 import kotlinx.android.synthetic.main.activity_token_qrscanner.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import org.json.JSONObject
+import xyz.youngbin.fluxsync.FluxSyncApp
 
 import xyz.youngbin.fluxsync.R
 import xyz.youngbin.fluxsync.Util
@@ -17,9 +24,19 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
     override fun handleResult(rawResult: Result?) {
         // Do something with the result here
         desc.text = getString(R.string.qr_found)
-        Log.v("Scanned!", rawResult!!.getText()) // Prints scan results
-        Log.v("Scanned!", rawResult.getBarcodeFormat().toString()) // Prints the scan format (qrcode, pdf417 etc.)
-
+        var qrData: JsonElement
+        try {
+            val app = applicationContext as FluxSyncApp
+            qrData = JsonParser().parse(rawResult!!.text)
+            app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
+            app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
+            setResult(Activity.RESULT_OK)
+            finish()
+        }catch (e: JsonParseException){
+            desc.text = getString(R.string.qr_invalid)
+        }catch (e: Exception){
+            desc.text = getString(R.string.qr_invalid)
+        }
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this)
     }
@@ -54,4 +71,6 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         super.onPause()
         mScannerView.stopCamera()
     }
+
+
 }

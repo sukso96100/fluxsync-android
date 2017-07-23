@@ -1,5 +1,6 @@
 package xyz.youngbin.fluxsync.connect
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,18 +25,15 @@ class ConnectActivity : AppCompatActivity() {
     lateinit var deviceName : String
     lateinit var deviceAddress : String
     var connectStatus : String = "preparing"
-    val REQUEST_BLUETOOTH_DISCOVERABLE = 10
-    val DISCOVERABLE_DURATION = 300
+    val REQUEST_SCAN_QR = 10
     val receiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             connectStatus = intent!!.getStringExtra("status")
             when(intent!!.getStringExtra("status")){
-                "preparing" -> status.text = getString(R.string.bluetooth_preparing)
-                "waiting" -> status.text = getString(R.string.bluetooth_waiting).format(deviceName)
-                "connecting" -> status.text = getString(R.string.bluetooth_connecting).format(deviceName)
-                "connected" -> status.text = getString(R.string.bluetooth_connected).format(deviceName)
-                "disconnected" -> status.text = getString(R.string.bluetooth_disconnected)
-                "failed" -> status.text = getString(R.string.bluetooth_failed)
+                "connecting" -> status.text = getString(R.string.connection_connecting).format(deviceName)
+                "connected" -> status.text = getString(R.string.connection_connected).format(deviceName)
+                "disconnected" -> status.text = getString(R.string.connection_disconnected)
+                "failed" -> status.text = getString(R.string.connection_failed)
             }
         }
     }
@@ -48,18 +46,18 @@ class ConnectActivity : AppCompatActivity() {
 
         deviceAddress = intent.getStringExtra("address")
         deviceName = intent.getStringExtra("name")
-        status.text = getString(R.string.bluetooth_preparing)
+        status.text = getString(R.string.connection_preparing)
         desc.text = getString(R.string.activity_connect_desc).format(app.hostname)
         cancel.setOnClickListener {
-            status.text = getString(R.string.bluetooth_canceling)
+            status.text = getString(R.string.connection_canceling)
             finish()
         }
 
         AuthClient(deviceAddress).sendInfo(this, {
             result: Boolean ->
-            Toast.makeText(this,"DONE!",Toast.LENGTH_LONG).show()
             Handler().postDelayed({
-                startActivityForResult(Intent(this, TokenQRScannerActivity::class.java), 0)
+                desc.text = getString(R.string.connection_scanning)
+                startActivityForResult(Intent(this, TokenQRScannerActivity::class.java), REQUEST_SCAN_QR)
             },3000)
         })
 
@@ -71,9 +69,14 @@ class ConnectActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if(connectStatus != "connected"){
-            stopService(Intent(this, BluetoothService::class.java))
+            stopService(Intent(this, ConnectionService::class.java))
         }
     }
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==REQUEST_SCAN_QR && resultCode== Activity.RESULT_OK){
+            desc.text = getString(R.string.connection_connecting).format(deviceName)
+        }
+    }
 }
