@@ -39,6 +39,10 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'me.dm7.barcodescanner:zxing:1.9.4'
+    compile ('io.socket:socket.io-client:1.0.0') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
     testCompile 'junit:junit:4.12'
 }
 repositories {

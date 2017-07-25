@@ -101,6 +101,7 @@ class ScannerActivity : AppCompatActivity() {
             // On device selected
             v: View ->
             val position = list.getChildAdapterPosition(v)
+            Log.d("Device",mDatas[position].name)
             var connectIntent = Intent(this, ConnectActivity::class.java)
             connectIntent.putExtra("address", mDatas[position].address)
             connectIntent.putExtra("name", mDatas[position].name)

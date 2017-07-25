@@ -7,6 +7,11 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 import java.util.*
+import android.content.pm.ActivityInfo
+import android.R.attr.orientation
+import android.content.Context
+import android.content.res.Configuration
+
 
 /**
  * Created by youngbin on 2017. 7. 1..
@@ -29,6 +34,15 @@ class Util{
                     ActivityCompat.requestPermissions(activity, Array(1){permission}, requestCode);
 
                 }
+            }
+        }
+
+        fun lockScreenOrientation(activity: Activity){
+            val currentOrientation = activity.resources.configuration.orientation
+            if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            } else {
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
             }
         }
 

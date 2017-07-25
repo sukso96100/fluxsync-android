@@ -16,6 +16,7 @@ import android.widget.Toast
 import android.net.nsd.NsdServiceInfo
 import android.net.nsd.NsdManager
 import android.os.Handler
+import android.util.Log
 import xyz.youngbin.fluxsync.FluxSyncApp
 import java.util.*
 
@@ -41,11 +42,12 @@ class ConnectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
-
+        Util.lockScreenOrientation(this)
         var app: FluxSyncApp = applicationContext as FluxSyncApp
 
         deviceAddress = intent.getStringExtra("address")
         deviceName = intent.getStringExtra("name")
+        Log.d("Device",deviceName)
         status.text = getString(R.string.connection_preparing)
         desc.text = getString(R.string.activity_connect_desc).format(app.hostname)
         cancel.setOnClickListener {
@@ -56,7 +58,7 @@ class ConnectActivity : AppCompatActivity() {
         AuthClient(deviceAddress).sendInfo(this, {
             result: Boolean ->
             Handler().postDelayed({
-                desc.text = getString(R.string.connection_scanning)
+                status.text = getString(R.string.connection_scanning)
                 startActivityForResult(Intent(this, TokenQRScannerActivity::class.java), REQUEST_SCAN_QR)
             },3000)
         })
@@ -76,7 +78,12 @@ class ConnectActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==REQUEST_SCAN_QR && resultCode== Activity.RESULT_OK){
-            desc.text = getString(R.string.connection_connecting).format(deviceName)
+            status.text = getString(R.string.connection_connecting).format(deviceName)
+
+            var ioIntent = Intent(this, ConnectionService::class.java)
+            ioIntent.putExtra("command", "connect")
+            ioIntent.putExtra("address", deviceAddress)
+            startService(ioIntent)
         }
     }
 }

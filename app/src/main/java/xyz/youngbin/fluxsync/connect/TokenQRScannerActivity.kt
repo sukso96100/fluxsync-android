@@ -28,6 +28,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         try {
             val app = applicationContext as FluxSyncApp
             qrData = JsonParser().parse(rawResult!!.text)
+            // Save token
             app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
             app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
             setResult(Activity.RESULT_OK)
@@ -43,7 +44,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Util.lockScreenOrientation(this)
         // Request Camera Permission
         Util.reqPermission(this, android.Manifest.permission.CAMERA, 1, getString(R.string.permission_camera))
 
