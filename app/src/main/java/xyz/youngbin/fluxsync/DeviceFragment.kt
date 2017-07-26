@@ -1,12 +1,15 @@
 package xyz.youngbin.fluxsync
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_device.*
 import xyz.youngbin.fluxsync.connect.ScannerActivity
 
 
@@ -23,6 +26,19 @@ class DeviceFragment : Fragment() {
     // TODO: Rename and change types of parameters
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
+    lateinit var app: FluxSyncApp
+    lateinit var mLocalBM: LocalBroadcastManager
+    val receiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when(intent!!.getStringExtra("status")){
+                "connected" -> {
+                    status.text = getString(R.string.device_connected)
+                    remoteName.text = app.mPref.getString("remoteName", getString(R.string.no_device))
+                }
+                "disconnected" -> status.text = getString(R.string.connection_disconnected)
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,18 +52,20 @@ class DeviceFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        app = context!!.applicationContext as FluxSyncApp
+        mLocalBM = LocalBroadcastManager.getInstance(activity)
         val layout = inflater!!.inflate(R.layout.fragment_device, container, false)
         val mButton = layout.findViewById(R.id.button)
         mButton.setOnClickListener {
             startActivity(Intent(activity, ScannerActivity::class.java))
         }
+        remoteName.text = app.mPref.getString("remoteName", getString(R.string.no_device))
         return layout
     }
 
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-
     }
 
     override fun onDetach() {

@@ -23,6 +23,7 @@
     <string name="device_status_scanned">Scanned.</string>
     <string name="connection_preparing">Preparing for connection</string>
     <string name="connection_scanning">Scanning QR Code</string>
+    <string name="connection_authenticating">Authenticating...</string>
     <string name="connection_connecting">Connecting with %s</string>
     <string name="connection_connected">Connected with %s</string>
     <string name="connection_disconnected">Disconnected</string>
@@ -35,4 +36,10 @@
     <string name="refresh">Refresh</string>
 
     <string name="permission_camera">To scan qr code, camera permission is required.</string>
+
+    <string name="btn_connect_new">Connect with new device</string>
+    <string name="btn_remove_connection">Remove connection</string>
+
+    <string name="no_device">No connected device yet</string>
+    <string name="device_connected">Connected</string>
 </resources>

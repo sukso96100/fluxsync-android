@@ -46,9 +46,16 @@ class Util{
             }
         }
 
-        val bluetoothSerialServiceUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-        val connectionStepFilter = "xyz.youngbin.fluxsync.CONNECTION_STEP"
-        val connectionStatusCodes = arrayOf("preparing","waiting","connecting","connected","disconnected","failed")
+        val connectionStatusFilter = "xyz.youngbin.fluxsync.CONNECTION_STATUS"
+        val connectionStatusCodes = arrayOf(
+                "preparing",
+                "scanning",
+                "connecting",
+                "authenticating",
+                "connected",
+                "disconnected",
+                "failed",
+                "unauthorized")
         val desktopAdvertisement = "FluxSyncDesktopApp"
     }
 }

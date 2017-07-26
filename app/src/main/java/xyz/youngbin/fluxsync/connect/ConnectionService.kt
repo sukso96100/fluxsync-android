@@ -10,6 +10,8 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.json.JSONObject
+import xyz.youngbin.fluxsync.FluxSyncApp
 import xyz.youngbin.fluxsync.Util
 import java.io.IOException
 import java.io.InputStream
@@ -22,29 +24,51 @@ class ConnectionService : Service() {
 
     lateinit var mSocket: Socket
     lateinit var mAddress: String
-    var connected: Boolean = false]
+    lateinit var mLocalBM: LocalBroadcastManager
+    var connected: Boolean = false
+
 
     override fun onCreate() {
         super.onCreate()
         Log.d("ConnectionService","Creating Service...")
-
-//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-//        mLocalBM = LocalBroadcastManager.getInstance(this)
+        mLocalBM = LocalBroadcastManager.getInstance(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        var command = intent!!.getStringExtra("command")
+        Log.d("service","onstartcommand")
+
+        val command = intent!!.getStringExtra("command")
         when(command){
             "connect" -> {
-                broadcastStatus(0)
-                mAddress = intent!!.getStringExtra("address")
+                broadcastStatus(2)
+                mAddress = intent.getStringExtra("address")
                 if(!connected){
-                    mSocket = IO.socket(mAddress)
+                    mSocket = IO.socket("http:/${mAddress}")
                     mSocket.connect()
+                    mSocket.on("connect", {
+                        broadcastStatus(3)
+                        // Authenticate with jwt token
+                        Log.d("status","Authenticating")
+                        val app = applicationContext as FluxSyncApp
+                        mSocket.emit("authenticate", JSONObject().put("token", app.mPref.getString("jwt","token")))
+                               .on("authenticated", {
+                                    // connected
+                                   Log.d("socket","Connected")
+                                   broadcastStatus(4)
+                                   mSocket.emit("test","TEST EMIT")
+                               })
+                               .on("unauthorized", {
+                                   // Unauthorized! cancel connection
+                                   Log.d("status","unauthorized")
+                                   broadcastStatus(7)
+                               })
+                    })
                 }
             }
             "disconnect" -> {
+                mSocket.disconnect()
+                mSocket.off()
                 stopSelf()
             }
             "send" -> {
@@ -73,7 +97,7 @@ class ConnectionService : Service() {
 
 
     fun broadcastStatus(statusCode: Int){
-        val intent = Intent(Util.connectionStepFilter)
+        val intent = Intent(Util.connectionStatusFilter)
         intent.putExtra("status",Util.connectionStatusCodes[statusCode])
         mLocalBM.sendBroadcast(intent)
     }
