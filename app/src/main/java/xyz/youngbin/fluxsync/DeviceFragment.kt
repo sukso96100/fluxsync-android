@@ -52,15 +52,16 @@ class DeviceFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        val layout = inflater!!.inflate(R.layout.fragment_device, container, false)
+        return layout
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         app = context!!.applicationContext as FluxSyncApp
         mLocalBM = LocalBroadcastManager.getInstance(activity)
-        val layout = inflater!!.inflate(R.layout.fragment_device, container, false)
-        val mButton = layout.findViewById(R.id.button)
-        mButton.setOnClickListener {
-            startActivity(Intent(activity, ScannerActivity::class.java))
-        }
+        button.setOnClickListener { startActivity(Intent(activity, ScannerActivity::class.java)) }
         remoteName.text = app.mPref.getString("remoteName", getString(R.string.no_device))
-        return layout
     }
 
 

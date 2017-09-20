@@ -75,12 +75,18 @@ class ScannerActivity : AppCompatActivity() {
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
             // Add Item to list
             val item = serviceInfo?.attributes
-            mDatas.add(DeviceInfo(item!!.get("hostname")!!.toString(charset("utf-8")),
-                    item.get("remoreId")!!.toString(charset("utf-8")),
-                    "${serviceInfo.host}:${serviceInfo.port}"))
-            runOnUiThread {
-                mAdapter.notifyDataSetChanged()
+            Log.d("serviceInfo",item.toString())
+            try{
+                mDatas.add(DeviceInfo(item!!.get("hostname")!!.toString(charset("utf-8")),
+                        item.get("deviceid")!!.toString(charset("utf-8")),
+                        "${serviceInfo.host}:${serviceInfo.port}"))
+                runOnUiThread {
+                    mAdapter.notifyDataSetChanged()
+                }
+            }catch (e: Exception){
+                e.printStackTrace()
             }
+
 
 
         }
@@ -103,7 +109,7 @@ class ScannerActivity : AppCompatActivity() {
             val position = list.getChildAdapterPosition(v)
             Log.d("Device",mDatas[position].name)
             var connectIntent = Intent(this, ConnectActivity::class.java)
-            connectIntent.putExtra("id", mDatas[position].remoreId)
+            connectIntent.putExtra("id", mDatas[position].remoteId)
             connectIntent.putExtra("address", mDatas[position].address)
             connectIntent.putExtra("name", mDatas[position].name)
             startActivity(connectIntent)
@@ -157,7 +163,7 @@ class ScannerActivity : AppCompatActivity() {
         }
     }
     // Data Class for device list view
-    data class DeviceInfo(var name: String, var remoreId: String, var address: String)
+    data class DeviceInfo(var name: String, var remoteId: String, var address: String)
 
     // Adapter for Scanned Device list
     class DeviceListAdapter
@@ -182,7 +188,7 @@ class ScannerActivity : AppCompatActivity() {
             val item: DeviceInfo = mDataSet.get(position)
 
             holder?.txtTitle?.text = item.name
-            holder?.txtInfo?.text = item.remoreId
+            holder?.txtInfo?.text = item.remoteId
             holder?.item?.setOnClickListener(mListener)
 
         }
