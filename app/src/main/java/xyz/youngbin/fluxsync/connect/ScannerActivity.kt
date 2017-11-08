@@ -129,7 +129,7 @@ class ScannerActivity : AppCompatActivity() {
         }
 
         //Check if wifi is on
-        val mWifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val mWifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         if(!mWifiManager.isWifiEnabled){
             Toast.makeText(this, getString(R.string.wifi_info_on), Toast.LENGTH_LONG).show()
             mWifiManager.setWifiEnabled(true)
@@ -199,14 +199,14 @@ class ScannerActivity : AppCompatActivity() {
             var txtInfo: TextView
             init {
                 item = v
-                txtTitle = v.findViewById(R.id.name) as TextView
-                txtInfo = v.findViewById(R.id.info) as TextView
+                txtTitle = v.findViewById<TextView>(R.id.name)
+                txtInfo = v.findViewById<TextView>(R.id.info)
             }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder{
-            var v: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bluetooth_device, parent, false)
-            var holder: ViewHolder = ViewHolder(v)
+            val v: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bluetooth_device, parent, false)
+            val holder: ViewHolder = ViewHolder(v)
             return holder
         }
 

@@ -40,10 +40,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mAdapter = MainPagerAdapter(supportFragmentManager)
-        mPager = findViewById(R.id.pager) as ViewPager
+        mPager = findViewById<ViewPager>(R.id.pager)
         mPager.adapter = mAdapter
 
-        val navigation = findViewById(R.id.navigation) as BottomNavigationView
+        val navigation = findViewById<BottomNavigationView>(R.id.navigation)
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         // Check permission
