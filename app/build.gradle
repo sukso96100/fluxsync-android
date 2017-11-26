@@ -44,6 +44,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     testCompile 'junit:junit:4.12'
+    compile 'com.github.andriydruk:dnssd:0.9.4'
 }
 repositories {
     mavenCentral()

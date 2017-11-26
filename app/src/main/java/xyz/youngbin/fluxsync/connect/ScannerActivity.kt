@@ -10,87 +10,73 @@ import android.support.v7.widget.RecyclerView
 import android.widget.TextView
 
 import xyz.youngbin.fluxsync.R
-import android.net.nsd.NsdManager
 import android.net.wifi.WifiManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_scanner.*
-import android.net.nsd.NsdServiceInfo
-import xyz.youngbin.fluxsync.Util
+import com.github.druk.dnssd.*
+import java.net.InetAddress
 
 
 class ScannerActivity : AppCompatActivity() {
-    lateinit var mNsdManager: NsdManager
+
+    lateinit var mDnsSdBrowser: DNSSD
+    lateinit var mBrowseService: DNSSDService
     lateinit var mLayoutManager: RecyclerView.LayoutManager
     lateinit var mAdapter: DeviceListAdapter
     lateinit var mDatas: ArrayList<DeviceInfo>
     var isScanning: Boolean = false
 
-    // Nstwork service discovery listener for scanning devices
-    val mListener = object : NsdManager.DiscoveryListener {
-
-        //  Called as soon as service discovery begins.
-        override fun onDiscoveryStarted(regType: String) {
-            isScanning = true
-            Log.d("discovery","started")
+    val mBrowser = object : BrowseListener{
+        override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun onServiceFound(service: NsdServiceInfo) {
-            Log.d("found", service.toString())
-            if(service.serviceName == Util.desktopAdvertisement){
-                mNsdManager.resolveService(service, mResolver)
-            }
+        override fun serviceFound(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
+            Log.d("found","start resolving")
+            resolveService(flags, ifIndex, serviceName, regType, domain)
         }
 
-        override fun onServiceLost(service: NsdServiceInfo) {
-            Log.d("lost", service.toString())
-            // When the network service is no longer available.
-            // Internal bookkeeping code goes here.
+        override fun serviceLost(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
+    }
 
-        override fun onDiscoveryStopped(serviceType: String) {
-            isScanning = false
-            runOnUiThread {
-                status.text = getString(R.string.device_status_scanned)
-            }
-        }
-
-        override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-            isScanning = false
-        }
-
-        override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-            isScanning = false
-            mNsdManager.stopServiceDiscovery(this)
-        }
-    };
 
     // Listener that resolves network service
-    val mResolver = object : NsdManager.ResolveListener {
-        override fun onResolveFailed(serviceInfo: NsdServiceInfo?, errorCode: Int) {
-            // Just do nothing
-        }
-
-        override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-            // Add Item to list
-            val item = serviceInfo?.attributes
-            Log.d("serviceInfo",item.toString())
-            try{
-                mDatas.add(DeviceInfo(item!!.get("hostname")!!.toString(charset("utf-8")),
-                        item.get("deviceid")!!.toString(charset("utf-8")),
-                        "${serviceInfo.host}:${serviceInfo.port}"))
-                runOnUiThread {
-                    mAdapter.notifyDataSetChanged()
-                }
-            }catch (e: Exception){
-                e.printStackTrace()
+    fun resolveService(flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?){
+        mDnsSdBrowser.resolve(flags, ifIndex, serviceName, regType, domain, object : ResolveListener{
+            override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
+            override fun serviceResolved(resolver: DNSSDService?, flags: Int, ifIndex: Int, fullName: String?,
+                                         hostName: String?, port: Int, txtRecord: MutableMap<String, String>?) {
+                Log.d("resolved","${fullName} / ${port} / ${txtRecord.toString()}")
+                queryService(flags, ifIndex, serviceName, hostName, port, txtRecord)
+            }
+
+        })
+    }
 
 
-        }
+    fun queryService(flags: Int, ifIndex: Int, serviceName: String?, hostName: String?,
+                     port: Int, txtRecord: MutableMap<String, String>?){
+        mDnsSdBrowser.queryRecord(flags, ifIndex, hostName,1,1, object : QueryListener {
+            override fun queryAnswered(query: DNSSDService?, flags: Int, ifIndex: Int, fullName: String?,
+                                       rrtype: Int, rrclass: Int, rdata: InetAddress?, ttl: Int) {
+                Log.d("query","${fullName} / ${rdata as InetAddress}:${port} / ${txtRecord.toString()}")
+                runOnUiThread {
+                    mDatas.add(DeviceInfo(hostName, txtRecord!!["deviceid"], "${rdata as InetAddress}:${port}"))
+                    mAdapter.notifyDataSetChanged()}
+            }
 
+            override fun operationFailed(service: DNSSDService?, errorCode: Int) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,36 +120,23 @@ class ScannerActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.wifi_info_on), Toast.LENGTH_LONG).show()
             mWifiManager.setWifiEnabled(true)
         }
-        mNsdManager = getSystemService(Context.NSD_SERVICE) as NsdManager
         scanDevices()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            mNsdManager.stopServiceDiscovery(mListener)
-        }catch (e: IllegalArgumentException ){
-            e.printStackTrace()
-        }
+        mBrowseService.stop()
     }
 
     // Scans devices
     fun scanDevices(){
+        isScanning = true
         Log.d("Scan","Scanning...")
-        if(!isScanning){
-            isScanning = true
-            try {
-                mNsdManager.stopServiceDiscovery(mListener)
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
-            // Start network discovery
-            mNsdManager.discoverServices("_http._tcp.", NsdManager.PROTOCOL_DNS_SD, mListener)
-            status.text = getString(R.string.device_status_scanning)
-        }
+        mDnsSdBrowser = DNSSDEmbedded()
+        mBrowseService = mDnsSdBrowser.browse("_http._tcp", mBrowser)
     }
     // Data Class for device list view
-    data class DeviceInfo(var name: String, var remoteId: String, var address: String)
+    data class DeviceInfo(var name: String?, var remoteId: String?, var address: String?)
 
     // Adapter for Scanned Device list
     class DeviceListAdapter
