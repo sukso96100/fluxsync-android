@@ -113,6 +113,10 @@ class ScannerActivity : AppCompatActivity() {
                 scanDevices()
             }
         }
+        //
+        connect_manual.setOnClickListener {
+
+        }
 
         //Check if wifi is on
         val mWifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
