@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParseException
@@ -23,25 +24,39 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
 
     // 처리받아서 인증하는 부분 여기다가 다시 인증받는 것을 추가로하고 예외처리를 하면 된다.
     lateinit var mScannerView : ZXingScannerView
+    var isManual: Boolean = false
+
     override fun handleResult(rawResult: Result?) {
         // Do something with the result here
+        //조건문으로 true 일때 qr 코드에 따라 작동되게하고 false 일때 밑에 부분으로 되게한다.
+        val app = applicationContext as FluxSyncApp
+        if (isManual == false) {
             desc.text = getString(R.string.qr_found)
             var qrData: JsonElement
             try {
-            val app = applicationContext as FluxSyncApp
-            qrData = JsonParser().parse(rawResult!!.text)
-            // Save token
-            app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
-            app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
-            setResult(Activity.RESULT_OK)
-            finish()
-        }catch (e: JsonParseException){
-            desc.text = getString(R.string.qr_invalid)
-        }catch (e: Exception){
-            desc.text = getString(R.string.qr_invalid)
+                qrData = JsonParser().parse(rawResult!!.text)
+                // Save token
+                app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
+                app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
+                setResult(Activity.RESULT_OK)
+                finish()
+            } catch (e: JsonParseException) {
+                desc.text = getString(R.string.qr_invalid)
+            } catch (e: Exception) {
+                desc.text = getString(R.string.qr_invalid)
+            }
+        }else{
+            Log.d("d",rawResult!!.text) // 값을 텍스트로 한다는 의미
+            Toast.makeText(this, rawResult!!.text, Toast.LENGTH_LONG).show()//화면에 메시 뜨게 하는것 //주소를 만들어서 intent로 connectacttivity 로 보내면 된다 .
+//            finish() //이부분은 인텐트 아래 부분으로 다 되면 qr코드가 꺼지게 만든다.
         }
-        // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this)
+
+
+            // If you would like to resume scanning, call this method below:
+            mScannerView.resumeCameraPreview(this)
+
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +69,8 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
 
         setContentView(R.layout.activity_token_qrscanner)
 
+        isManual = intent.getBooleanExtra("isManual",false) //받는 부분으로 보낸 걸 받는다.
+
         mScannerView = ZXingScannerView(this)
         frame.addView(mScannerView)
         mScannerView.setAutoFocus(true)
@@ -62,6 +79,8 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
             mScannerView.flash = !mScannerView.flash
         }
 //        val action = intent.getIntExtra("action",0)
+
+
     }
 
     override fun onResume() {
