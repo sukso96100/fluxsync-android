@@ -26,23 +26,29 @@ class ConnectActivity : AppCompatActivity() {
     lateinit var remoteName : String
     lateinit var deviceAddress : String
     lateinit var remoteId : String
-    var connectStatus : String = "preparing"
+    var connectStatus : Int = Util.ConnectionStatus.PREPARING.code
     val REQUEST_SCAN_QR = 10
     lateinit var app: FluxSyncApp
     val receiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            connectStatus = intent!!.getStringExtra("status")
-            when(intent.getStringExtra("status")){
-                "connecting" -> status.text = getString(R.string.connection_connecting).format(remoteName)
-                "authenticating" -> status.text = getString(R.string.connection_authenticating)
-                "connected" -> {
+            // 연결 상태 표시
+            connectStatus = intent!!.getIntExtra("status", Util.ConnectionStatus.PREPARING.code)
+            when(connectStatus){
+                Util.ConnectionStatus.CONNECTING.code ->
+                    status.text = getString(R.string.connection_connecting).format(remoteName)
+                Util.ConnectionStatus.AUTHENTICATING.code ->
+                    status.text = getString(R.string.connection_authenticating)
+                Util.ConnectionStatus.CONNECTED.code  -> {
+                    // If Connection was done, store info about the desktop.
                     status.text = getString(R.string.connection_connected).format(remoteName)
                     app.mPref.edit().putString("remoteName", remoteName).apply()
                     app.mPref.edit().putString("remoteId", remoteId).apply()
                     finish()
                 }
-                "disconnected" -> status.text = getString(R.string.connection_disconnected)
-                "failed" -> status.text = getString(R.string.connection_failed)
+                Util.ConnectionStatus.DISCONNECTED.code ->
+                    status.text = getString(R.string.connection_disconnected)
+                Util.ConnectionStatus.FAILED.code ->
+                    status.text = getString(R.string.connection_failed)
             }
         }
     }
@@ -80,8 +86,8 @@ class ConnectActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(connectStatus != "connected"){
-
+        if(connectStatus != Util.ConnectionStatus.CONNECTED.code){
+    
             stopService(Intent(this, ConnectionService::class.java))
         }
     }
@@ -93,7 +99,7 @@ class ConnectActivity : AppCompatActivity() {
             status.text = getString(R.string.connection_connecting).format(remoteName)
             mLocalBM.registerReceiver(receiver, IntentFilter(Util.connectionStatusFilter))
             val ioIntent = Intent(this, ConnectionService::class.java)
-            ioIntent.putExtra("command", "connect")
+            ioIntent.putExtra("command", ConnectionService.Commands.CONNECT.cmd)
             ioIntent.putExtra("address", deviceAddress)
             startService(ioIntent)
         }

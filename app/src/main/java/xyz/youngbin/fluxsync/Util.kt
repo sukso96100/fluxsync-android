@@ -47,15 +47,18 @@ class Util{
         }
 
         val connectionStatusFilter = "xyz.youngbin.fluxsync.CONNECTION_STATUS"
-        val connectionStatusCodes = arrayOf(
-                "preparing",
-                "scanning",
-                "connecting",
-                "authenticating",
-                "connected",
-                "disconnected",
-                "failed",
-                "unauthorized")
-        val desktopAdvertisement = "FluxSyncDesktopApp"
+
+        val serviceType = "_fluxsync._tcp"
+
+    }
+    enum class ConnectionStatus(val code: Int){
+        PREPARING(0),
+        SCANNING(1),
+        CONNECTING(2),
+        AUTHENTICATING(3),
+        CONNECTED(4),
+        DISCONNECTED(5),
+        FAILED(6),
+        UNAUTHORIZED(7)
     }
 }

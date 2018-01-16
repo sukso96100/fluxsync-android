@@ -16,6 +16,7 @@ import android.view.*
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_scanner.*
 import com.github.druk.dnssd.*
+import xyz.youngbin.fluxsync.Util
 import java.net.InetAddress
 
 
@@ -33,12 +34,15 @@ class ScannerActivity : AppCompatActivity() {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun serviceFound(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
+        override fun serviceFound(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?,
+                                  regType: String?, domain: String?) {
+            Log.d("found","${serviceName} / ${regType} / ${domain}")
             Log.d("found","start resolving")
             resolveService(flags, ifIndex, serviceName, regType, domain)
         }
 
-        override fun serviceLost(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?, regType: String?, domain: String?) {
+        override fun serviceLost(browser: DNSSDService?, flags: Int, ifIndex: Int, serviceName: String?,
+                                 regType: String?, domain: String?) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
@@ -68,8 +72,9 @@ class ScannerActivity : AppCompatActivity() {
                                        rrtype: Int, rrclass: Int, rdata: InetAddress?, ttl: Int) {
                 Log.d("query","${fullName} / ${rdata as InetAddress}:${port} / ${txtRecord.toString()}")
                 runOnUiThread {
-                    mDatas.add(DeviceInfo(hostName, txtRecord!!["deviceid"], "${rdata as InetAddress}:${port}"))
-                    mAdapter.notifyDataSetChanged()}
+                    mDatas.add(DeviceInfo(hostName, txtRecord!!["deviceid"], "${rdata}:${port}"))
+                    mAdapter.notifyDataSetChanged()
+                }
             }
 
             override fun operationFailed(service: DNSSDService?, errorCode: Int) {
@@ -133,7 +138,7 @@ class ScannerActivity : AppCompatActivity() {
         isScanning = true
         Log.d("Scan","Scanning...")
         mDnsSdBrowser = DNSSDEmbedded()
-        mBrowseService = mDnsSdBrowser.browse("_http._tcp", mBrowser)
+        mBrowseService = mDnsSdBrowser.browse(Util.serviceType, mBrowser)
     }
     // Data Class for device list view
     data class DeviceInfo(var name: String?, var remoteId: String?, var address: String?)

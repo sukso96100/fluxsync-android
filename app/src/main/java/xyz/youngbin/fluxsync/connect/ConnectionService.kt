@@ -18,6 +18,14 @@ import java.io.InputStream
 import java.io.OutputStream
 
 class ConnectionService : Service() {
+
+        enum class Commands(val cmd: String){
+            CONNECT("connect"),
+            DISCONNECT("disconnect"),
+            SEND("send")
+        }
+
+
     override fun onBind(intent: Intent?): IBinder {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -40,38 +48,41 @@ class ConnectionService : Service() {
 
         val command = intent!!.getStringExtra("command")
         when(command){
-            "connect" -> {
-                broadcastStatus(2)
+            Commands.CONNECT.cmd-> {
+                // Connect with desktop
+                broadcastStatus(Util.ConnectionStatus.CONNECTING)
                 mAddress = intent.getStringExtra("address")
                 if(!connected){
                     mSocket = IO.socket("http:/${mAddress}")
                     mSocket.connect()
                     mSocket.on("connect", {
-                        broadcastStatus(3)
+                        broadcastStatus(Util.ConnectionStatus.AUTHENTICATING)
                         // Authenticate with jwt token
                         Log.d("status","Authenticating")
                         val app = applicationContext as FluxSyncApp
-                        mSocket.emit("authenticate", JSONObject().put("token", app.mPref.getString("jwt","token")))
+                        mSocket.emit("authenticate",
+                                JSONObject().put("token", app.mPref.getString("jwt","token")))
                                .on("authenticated", {
                                     // connected
                                    Log.d("socket","Connected")
-                                   broadcastStatus(4)
+                                   broadcastStatus(Util.ConnectionStatus.CONNECTED)
                                    mSocket.emit("test","TEST EMIT")
                                })
                                .on("unauthorized", {
                                    // Unauthorized! cancel connection
                                    Log.d("status","unauthorized")
-                                   broadcastStatus(7)
+                                   broadcastStatus(Util.ConnectionStatus.UNAUTHORIZED)
                                })
                     })
                 }
             }
-            "disconnect" -> {
+            Commands.DISCONNECT.cmd -> {
+                // Disconnect from desktop
                 mSocket.disconnect()
                 mSocket.off()
                 stopSelf()
             }
-            "send" -> {
+            Commands.SEND.cmd -> {
                 // Send Data using outputstream
             }
         }
@@ -89,20 +100,18 @@ class ConnectionService : Service() {
         }catch (e: Exception){
             e.printStackTrace()
         }
-        broadcastStatus(4)
+        broadcastStatus(Util.ConnectionStatus.DISCONNECTED)
     }
 
 
 
 
 
-    fun broadcastStatus(statusCode: Int){
+    fun broadcastStatus(status: Util.ConnectionStatus){
         val intent = Intent(Util.connectionStatusFilter)
-        intent.putExtra("status",Util.connectionStatusCodes[statusCode])
+        intent.putExtra("status", status.code)
         mLocalBM.sendBroadcast(intent)
     }
-
-
 
 
 }

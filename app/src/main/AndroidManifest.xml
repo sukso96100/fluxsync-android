@@ -10,13 +10,13 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".FluxSyncApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".FluxSyncApp">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -40,8 +40,18 @@
             android:name=".connect.ScannerActivity"
             android:label="@string/activity_scanner"
             android:theme="@style/AppTheme.NoToolbar" />
-        <activity android:name=".connect.TokenQRScannerActivity"
-            android:theme="@style/AppTheme.NoToolbar"/>
+        <activity
+            android:name=".connect.TokenQRScannerActivity"
+            android:theme="@style/AppTheme.NoToolbar" />
+
+        <receiver
+            android:name=".connect.AutoConnector"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
