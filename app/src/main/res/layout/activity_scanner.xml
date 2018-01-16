@@ -54,15 +54,24 @@
         android:text="@string/cancel" />
 
     <android.support.v7.widget.AppCompatButton
+        android:id="@+id/connect_manual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/refresh"
+        android:layout_alignBottom="@+id/refresh"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@android:color/white"
+        android:text="connect manual" />
+
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="4dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="@string/refresh"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="@android:color/white"
+        android:text="@string/refresh"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"

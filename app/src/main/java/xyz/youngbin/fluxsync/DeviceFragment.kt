@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_device.*
 import xyz.youngbin.fluxsync.connect.ScannerActivity
+import xyz.youngbin.fluxsync.connect.TokenQRScannerActivity
 
 
 /**
@@ -61,6 +62,9 @@ class DeviceFragment : Fragment() {
         app = context!!.applicationContext as FluxSyncApp
         mLocalBM = LocalBroadcastManager.getInstance(activity)
         button.setOnClickListener { startActivity(Intent(activity, ScannerActivity::class.java)) }
+//        val intent: Intent = Intent(activity, TokenQRScannerActivity::class.java)
+//        intent.putExtra("action",0);
+//        startActivity(intent)
         remoteName.text = app.mPref.getString("remoteName", getString(R.string.no_device))
     }
 

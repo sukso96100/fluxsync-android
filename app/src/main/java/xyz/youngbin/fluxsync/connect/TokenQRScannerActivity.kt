@@ -20,12 +20,14 @@ import java.util.jar.Manifest
 
 class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
+
+    // 처리받아서 인증하는 부분 여기다가 다시 인증받는 것을 추가로하고 예외처리를 하면 된다.
     lateinit var mScannerView : ZXingScannerView
     override fun handleResult(rawResult: Result?) {
         // Do something with the result here
-        desc.text = getString(R.string.qr_found)
-        var qrData: JsonElement
-        try {
+            desc.text = getString(R.string.qr_found)
+            var qrData: JsonElement
+            try {
             val app = applicationContext as FluxSyncApp
             qrData = JsonParser().parse(rawResult!!.text)
             // Save token
@@ -48,6 +50,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         // Request Camera Permission
         Util.reqPermission(this, android.Manifest.permission.CAMERA, 1, getString(R.string.permission_camera))
 
+//intent 보고 여기서 처리한다. 안드로이드에서 액티비티 실행할 때 이걸로한다. 인텐트에 풋엑스트라르 추가해서 이벤트를보낸다다
 
         setContentView(R.layout.activity_token_qrscanner)
 
@@ -58,7 +61,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         flash.setOnClickListener {
             mScannerView.flash = !mScannerView.flash
         }
-
+//        val action = intent.getIntExtra("action",0)
     }
 
     override fun onResume() {
