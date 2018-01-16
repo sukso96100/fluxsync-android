@@ -65,7 +65,7 @@ class ConnectActivity : AppCompatActivity() {
             finish()
         }
 
-        AuthClient(deviceAddress).sendInfo(this, {
+        AuthClient(deviceAddress).sendInfo(this, { //서버쪽에 http를 요청 해가지고 토큰을 요청하는 부분 그러면 토큰으로 바뀌고 스캔으로 되고 스캔하게
             result: Boolean ->
             Handler().postDelayed({
                 status.text = getString(R.string.connection_scanning)
