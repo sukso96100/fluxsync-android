@@ -1,10 +1,12 @@
 package xyz.youngbin.fluxsync
 
 import android.app.Application
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.preference.Preference
 import android.preference.PreferenceManager
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import java.util.*
 
@@ -33,5 +35,9 @@ class FluxSyncApp : Application() {
             hostname = "${Build.MODEL} ${Build.ID}"
             mPref.edit().putString("hostname", hostname).apply()
         }
+
+        // TODO - broadcast a implicit intent locally to start automatic connection
+        val mLocalBM = LocalBroadcastManager.getInstance(this)
+        mLocalBM.sendBroadcast(Intent(Util.appStartFilter))
     }
 }

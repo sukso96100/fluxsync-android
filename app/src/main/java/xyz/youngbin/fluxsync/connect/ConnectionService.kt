@@ -51,7 +51,7 @@ class ConnectionService : Service() {
             Commands.CONNECT.cmd-> {
                 // Connect with desktop
                 broadcastStatus(Util.ConnectionStatus.CONNECTING)
-                mAddress = intent.getStringExtra("address")
+                mAddress = intent.getStringExtra("address") // resolve address from intent
                 if(!connected){
                     mSocket = IO.socket("http:/${mAddress}")
                     mSocket.connect()
@@ -60,6 +60,7 @@ class ConnectionService : Service() {
                         // Authenticate with jwt token
                         Log.d("status","Authenticating")
                         val app = applicationContext as FluxSyncApp
+                        // load token from preference
                         mSocket.emit("authenticate",
                                 JSONObject().put("token", app.mPref.getString("jwt","token")))
                                .on("authenticated", {

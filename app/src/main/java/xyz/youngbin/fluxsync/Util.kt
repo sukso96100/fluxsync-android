@@ -47,6 +47,7 @@ class Util{
         }
 
         val connectionStatusFilter = "xyz.youngbin.fluxsync.CONNECTION_STATUS"
+        val appStartFilter = "xyz.youngbin.fluxsync.APP_STARTED"
 
         val serviceType = "_fluxsync._tcp"
 

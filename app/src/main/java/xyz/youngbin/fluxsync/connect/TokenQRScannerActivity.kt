@@ -28,7 +28,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
         try {
             val app = applicationContext as FluxSyncApp
             qrData = JsonParser().parse(rawResult!!.text)
-            // Save token
+            // Save jwt token and key for encryption
             app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
             app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
             setResult(Activity.RESULT_OK)

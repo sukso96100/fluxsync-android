@@ -24,7 +24,7 @@ import java.util.*
 class ConnectActivity : AppCompatActivity() {
     lateinit var mLocalBM : LocalBroadcastManager
     lateinit var remoteName : String
-    lateinit var deviceAddress : String
+    lateinit var remoteAddress : String
     lateinit var remoteId : String
     var connectStatus : Int = Util.ConnectionStatus.PREPARING.code
     val REQUEST_SCAN_QR = 10
@@ -60,7 +60,7 @@ class ConnectActivity : AppCompatActivity() {
 
         app = applicationContext as FluxSyncApp
         mLocalBM = LocalBroadcastManager.getInstance(this)
-        deviceAddress = intent.getStringExtra("address")
+        remoteAddress = intent.getStringExtra("address")
         remoteName = intent.getStringExtra("name")
         remoteId = intent.getStringExtra("id")
         Log.d("Device",remoteName)
@@ -71,7 +71,9 @@ class ConnectActivity : AppCompatActivity() {
             finish()
         }
 
-        AuthClient(deviceAddress).sendInfo(this, {
+        // Request jwt token to desktop
+        // Desktop app will show an qr code with token
+        AuthClient(remoteAddress).sendInfo(this, {
             result: Boolean ->
             Handler().postDelayed({
                 status.text = getString(R.string.connection_scanning)
@@ -98,9 +100,14 @@ class ConnectActivity : AppCompatActivity() {
             Log.d("connect","connecting")
             status.text = getString(R.string.connection_connecting).format(remoteName)
             mLocalBM.registerReceiver(receiver, IntentFilter(Util.connectionStatusFilter))
+
+            // Store IP for reconnection
+            app.mPref.edit().putString("remoteAddr", remoteAddress).apply()
+
+            // Connect with remote
             val ioIntent = Intent(this, ConnectionService::class.java)
             ioIntent.putExtra("command", ConnectionService.Commands.CONNECT.cmd)
-            ioIntent.putExtra("address", deviceAddress)
+            ioIntent.putExtra("address", remoteAddress)
             startService(ioIntent)
         }
     }
