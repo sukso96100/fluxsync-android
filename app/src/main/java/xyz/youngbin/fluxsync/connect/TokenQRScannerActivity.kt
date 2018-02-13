@@ -56,19 +56,21 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
             Log.d("d",rawResult!!.text) // 값을 텍스트로 한다는 의미
             Toast.makeText(this, rawResult!!.text, Toast.LENGTH_LONG).show()
 
-            val remoteId = qrData.asJsonObject.get("remoteid").asString
-            val remoteAdder = qrData.asJsonObject.get("remoteAddr").asString
-
+            val remoteId = qrData.asJsonObject.get("deviceId").asString
+            val remoteAdder = "${qrData.asJsonObject.get("ip").asString}:${qrData.asJsonObject.get("port").asString}"
+            val remoteName = qrData.asJsonObject.get("hostname").asString
 
             app.mPref.edit().putString("remoteid" , remoteId).apply()
-            app.mPref.edit().putString("remoteAddr" , qrData.asJsonObject.get("remoteAddr").asString).apply()
+            app.mPref.edit().putString("remoteAddr" , remoteAdder).apply()
+            app.mPref.edit().putString("remotename" , remoteName).apply()
 
 
             var Connectintent = Intent(this, ConnectActivity::class.java)
             Connectintent.putExtra("id", remoteId)
-            Connectintent.putExtra("addr", remoteAdder)
+            Connectintent.putExtra("address", remoteAdder)
+            Connectintent.putExtra("name",remoteName)
             startActivity(Connectintent)
-
+            finish()
 
 
 
