@@ -1,6 +1,7 @@
 package xyz.youngbin.fluxsync.connect
 
 import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -29,15 +30,21 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
     override fun handleResult(rawResult: Result?) {
         // Do something with the result here
         //조건문으로 true 일때 qr 코드에 따라 작동되게하고 false 일때 밑에 부분으로 되게한다.
+
         val app = applicationContext as FluxSyncApp
-        if (isManual == false) {
+        var qrData=JsonParser().parse(rawResult!!.text) // 파싱하는부분
+
+
+        if (isManual == false) { //토큰스캔하는 거
             desc.text = getString(R.string.qr_found)
-            var qrData: JsonElement
+
             try {
                 qrData = JsonParser().parse(rawResult!!.text)
                 // Save token
                 app.mPref.edit().putString("jwt", qrData.asJsonObject.get("jwt").asString).apply()
                 app.mPref.edit().putString("key", qrData.asJsonObject.get("key").asString).apply()
+
+
                 setResult(Activity.RESULT_OK)
                 finish()
             } catch (e: JsonParseException) {
@@ -45,10 +52,32 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
             } catch (e: Exception) {
                 desc.text = getString(R.string.qr_invalid)
             }
-        }else{
+        }else{ // ip 데이터 쪽 가져오는거
             Log.d("d",rawResult!!.text) // 값을 텍스트로 한다는 의미
-            Toast.makeText(this, rawResult!!.text, Toast.LENGTH_LONG).show()//화면에 메시 뜨게 하는것 //주소를 만들어서 intent로 connectacttivity 로 보내면 된다 .
-//            finish() //이부분은 인텐트 아래 부분으로 다 되면 qr코드가 꺼지게 만든다.
+            Toast.makeText(this, rawResult!!.text, Toast.LENGTH_LONG).show()
+
+            val remoteId = qrData.asJsonObject.get("remoteid").asString
+            val remoteAdder = qrData.asJsonObject.get("remoteAddr").asString
+
+
+            app.mPref.edit().putString("remoteid" , remoteId).apply()
+            app.mPref.edit().putString("remoteAddr" , qrData.asJsonObject.get("remoteAddr").asString).apply()
+
+
+            var Connectintent = Intent(this, ConnectActivity::class.java)
+            Connectintent.putExtra("id", remoteId)
+            Connectintent.putExtra("addr", remoteAdder)
+            startActivity(Connectintent)
+
+
+
+
+
+            //이쪽 부분에서 conttect Activity쪽에서 address / id / name 부분을 받게 하면된다.
+            //화면에 메시지 뜨게 하는것
+            // 주소를 만들어서 intent로 connectacttivity 로 보내면 된다 .
+            //            finish()
+            // 이부분은 인텐트 아래 부분으로 다 되면 qr코드가 꺼지게 만든다.
         }
 
 
