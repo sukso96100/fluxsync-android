@@ -17,11 +17,16 @@ import android.net.nsd.NsdServiceInfo
 import android.net.nsd.NsdManager
 import android.os.Handler
 import android.util.Log
+import kotlinx.android.synthetic.main.activity_scanner.*
 import xyz.youngbin.fluxsync.FluxSyncApp
 import java.util.*
 
 
 class ConnectActivity : AppCompatActivity() {
+
+    lateinit var mDatas: ArrayList<ScannerActivity.DeviceInfo>
+
+
     lateinit var mLocalBM : LocalBroadcastManager
     lateinit var remoteName : String
     lateinit var deviceAddress : String
@@ -69,8 +74,20 @@ class ConnectActivity : AppCompatActivity() {
             result: Boolean ->
             Handler().postDelayed({
                 status.text = getString(R.string.connection_scanning)
-                startActivityForResult(Intent(this, TokenQRScannerActivity::class.java), REQUEST_SCAN_QR)
-            },3000)
+                startActivityForResult(Intent(this, TokenQRScannerActivity::class.java), REQUEST_SCAN_QR) // 스캐너 부분 요청
+            },3000) // 3초 후에 킨다 .
+
+
+
+//
+//            val position = list.getChildAdapterPosition(v)
+//            mDatas = ArrayList<ScannerActivity.DeviceInfo>()
+//
+//            var TokenIntent = Intent(this, TokenQRScannerActivity::class.java)
+//            TokenIntent.putExtra("address", mDatas[position].address)
+//            startActivity(TokenIntent)
+
+
         })
 
 

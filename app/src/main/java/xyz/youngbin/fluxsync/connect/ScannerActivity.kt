@@ -84,7 +84,6 @@ class ScannerActivity : AppCompatActivity() {
          setContentView(R.layout.activity_scanner)
 
         // Setup RecyclerView
-        mDatas = ArrayList<DeviceInfo>()
         mLayoutManager = LinearLayoutManager(this)
         list.layoutManager = mLayoutManager
 
