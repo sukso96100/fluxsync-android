@@ -44,6 +44,7 @@ class ConnectionService : Service() {
                 broadcastStatus(2)
                 mAddress = intent.getStringExtra("address")
                 if(!connected){
+                    if(!mAddress.contains("/")) { mAddress = "/${mAddress}"}
                     mSocket = IO.socket("http:/${mAddress}")
                     mSocket.connect()
                     mSocket.on("connect", {

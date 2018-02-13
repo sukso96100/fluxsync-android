@@ -11,13 +11,8 @@ import android.support.v4.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.activity_connection.*
 import xyz.youngbin.fluxsync.R
 import xyz.youngbin.fluxsync.Util
-import android.bluetooth.BluetoothAdapter
-import android.widget.Toast
-import android.net.nsd.NsdServiceInfo
-import android.net.nsd.NsdManager
 import android.os.Handler
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_scanner.*
 import xyz.youngbin.fluxsync.FluxSyncApp
 import java.util.*
 
