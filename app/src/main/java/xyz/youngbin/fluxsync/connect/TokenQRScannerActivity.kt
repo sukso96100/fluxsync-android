@@ -78,6 +78,7 @@ class TokenQRScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandl
             // 주소를 만들어서 intent로 connectacttivity 로 보내면 된다 .
             //            finish()
             // 이부분은 인텐트 아래 부분으로 다 되면 qr코드가 꺼지게 만든다.
+            //수정부분
         }
 
 
