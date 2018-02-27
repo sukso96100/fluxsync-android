@@ -17,7 +17,7 @@ import android.content.res.Configuration
  * Created by youngbin on 2017. 7. 1..
  */
 class Util{
-    companion object {
+    companion object { //자바 스태틱 여기다가 셋팅해놓으면 초기화 안하고 쓸 수 있다.
         fun reqPermission(activity: Activity, permission: String, requestCode: Int, reason: String){
             // Here, thisActivity is the current activity
             Log.d("permission","checking if granted")

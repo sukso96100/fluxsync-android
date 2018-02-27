@@ -104,10 +104,15 @@ class ConnectActivity : AppCompatActivity() {
             Log.d("connect","connecting")
             status.text = getString(R.string.connection_connecting).format(remoteName)
             mLocalBM.registerReceiver(receiver, IntentFilter(Util.connectionStatusFilter))
-            val ioIntent = Intent(this, ConnectionService::class.java)
+
+            val ioIntent = Intent(this, ConnectionService::class.java) // 이쪽에서 불러서 보내는 부분
             ioIntent.putExtra("command", "connect")
             ioIntent.putExtra("address", deviceAddress)
             startService(ioIntent)
+
+
+
+
         }
     }
 }
