@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_device.*
+import org.json.JSONObject
 import xyz.youngbin.fluxsync.connect.ConnectionService
 import xyz.youngbin.fluxsync.connect.ScannerActivity
 import xyz.youngbin.fluxsync.connect.TokenQRScannerActivity
@@ -94,10 +95,13 @@ class DeviceFragment : Fragment() {
         remoteName.text = app.mPref.getString("remoteName", getString(R.string.no_device)) // remoteName 은 키값 이고 뒤에꺼는 키값없을떄 어떻게 할지 한다.
 
         button2.setOnClickListener{
+            var obj = JSONObject()
+            obj.put("title","example")
+            obj.put("content","example content")
             val sendIntent = Intent(activity, ConnectionService::class.java) // 이부분에서 인텐트를 만들고 보낸다.
             sendIntent.putExtra("command", "send")//커맨드로 send 할 때 아래부분을 같이 보낸다는 뜻으로 쓴다.
             sendIntent.putExtra("eventName", "notify")  //connection Service 부분에 있는 커넥 부분에 있는걸 받아서 보낸다 .
-            sendIntent.putExtra("content", "test" )
+            sendIntent.putExtra("content", obj.toString() )
             activity.startService(sendIntent)
         }
     }

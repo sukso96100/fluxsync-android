@@ -28,7 +28,7 @@
         </activity>
 
         <service
-            android:name=".connect.ConnectionService"
+            android:name="xyz.youngbin.fluxsync.connect.ConnectionService"
             android:enabled="true"
             android:exported="true" />
 
@@ -45,10 +45,9 @@
             android:theme="@style/AppTheme.NoToolbar" />
 
         <service
-            android:name=".NotificationService"
-
             android:enabled="true"
             android:exported="true"
+            android:name="xyz.youngbin.fluxsync.NotificationService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
