@@ -57,5 +57,6 @@ class Util{
                 "failed",
                 "unauthorized")
         val desktopAdvertisement = "FluxSyncDesktopApp"
+        val sendDataFilter = "xyz.youngbin.fluxsync.SEND_DATA"
     }
 }

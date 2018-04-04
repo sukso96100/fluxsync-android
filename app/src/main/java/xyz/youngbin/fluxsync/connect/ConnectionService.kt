@@ -3,7 +3,10 @@ package xyz.youngbin.fluxsync.connect
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.AsyncTask
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
@@ -27,11 +30,19 @@ class ConnectionService : Service() {
     lateinit var mLocalBM: LocalBroadcastManager
     var connected: Boolean = false
 
-
+    val sendDataReceiver = object: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d("ConnectionService","Sending data")
+            val eventName = intent!!.getStringExtra("eventName") // 두가지 변수를 만들어 주고 들어갈 것을 지정 해준다. 커맨드를 eventName 으로 하고
+            val content = intent.getStringExtra("content")      //
+            mSocket.emit(eventName, content)// 그냥 소켓이름에 들어갈 것 두가지
+        }
+    }
     override fun onCreate() {
         super.onCreate()
         Log.d("ConnectionService","Creating Service...")
         mLocalBM = LocalBroadcastManager.getInstance(this)
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -58,6 +69,7 @@ class ConnectionService : Service() {
                                    Log.d("socket","Connected")
                                    broadcastStatus(4)
                                    mSocket.emit("test","TEST EMIT")
+                                   mLocalBM.registerReceiver(sendDataReceiver, IntentFilter(Util.sendDataFilter))
                                })
                                .on("unauthorized", {
                                    // Unauthorized! cancel connection
