@@ -14,6 +14,7 @@ import xyz.youngbin.fluxsync.Util
 import android.os.Handler
 import android.util.Log
 import xyz.youngbin.fluxsync.FluxSyncApp
+import xyz.youngbin.fluxsync.NotificationService
 import java.util.*
 
 
@@ -110,7 +111,7 @@ class ConnectActivity : AppCompatActivity() {
             ioIntent.putExtra("address", deviceAddress)
             startService(ioIntent)
 
-
+            startService(Intent(this, NotificationService::class.java))
 
 
         }

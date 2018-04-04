@@ -1,22 +1,24 @@
 package xyz.youngbin.fluxsync
 
-import android.annotation.SuppressLint
 import android.app.Notification.*
-import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.telecom.ConnectionService
+import android.util.Log
 import org.json.JSONObject
-import xyz.youngbin.fluxsync.R.id.remoteName
 
 public class NotificationService : NotificationListenerService() {
 
+    override fun onBind(intent: Intent?): IBinder {
+        Log.d("NotificationService","onBind")
+        return super.onBind(intent)
+    }
 
     override fun onCreate() {
         super.onCreate()
-
+        Log.d("NotificationService","onCreate")
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -42,11 +44,14 @@ public class NotificationService : NotificationListenerService() {
         data.put("content", content)
         data.put("noti_id" , noti_id)
 
-        var Service_intent = Intent(this, ConnectionService::class.java)
-        Service_intent.putExtra("command", "send")//커맨드로 send 할 때 아래부분을 같이 보낸다는 뜻으로 쓴다.
-        Service_intent.putExtra("eventName", "notify") //connection Service 부분에 있는 커넥 부분에 있는걸 받아서 보낸다 .
-        Service_intent.putExtra("content" , data.toString()) //내용을 문자열로 해서 보내는 것 !
-        startService(Service_intent)
+        val mirrorIntent = Intent(this, ConnectionService::class.java)
+        mirrorIntent.putExtra("command", "send")//커맨드로 send 할 때 아래부분을 같이 보낸다는 뜻으로 쓴다.
+        mirrorIntent.putExtra("eventName", "notify") //connection Service 부분에 있는 커넥 부분에 있는걸 받아서 보낸다 .
+        mirrorIntent.putExtra("content" , data.toString()) //내용을 문자열로 해서 보내는 것 !
+        Log.d("NotificationService", data.toString())
+        Log.d("NotificationService","calling startService ...")
+        startService(mirrorIntent) // 이 함수가 호출되지 않음
+        Log.d("NotificationService","... calling startService")
         //json 쓴 걸 문자열로 바꿔주는 기능   자바에서 객체였는데 그걸 문자열로 바꾸는것 이쪽부분에 intent 해주면 된다 .
         //보내는건 deviceFragment 에 있다 .
 
@@ -88,10 +93,12 @@ public class NotificationService : NotificationListenerService() {
 
     override fun onListenerConnected() {
         super.onListenerConnected()
+        Log.d("NotificationService","onListenerConnected")
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        Log.d("NotificationService","onListenerDisconnected")
     }
 
 
