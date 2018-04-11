@@ -34,7 +34,7 @@ public class NotificationService : NotificationListenerService() {
         //이렇게하면 변수 sbn 에 해서 제목을 빼오고
         //? 물음표 부분은 널이면 실행하지말고 널이 아니면 실행하라는 뜻이다.
 
-        val content = currentItem?.get(EXTRA_TITLE)
+        val content = currentItem?.get(EXTRA_TEXT)
         //텍스트 부분으로 한다.
         //커맨드를 샌드로하고 컨테츠에다가 이 두개를 실어서 보내면 되는데 양식을 잡아서
         //제이슨 양식으로 해서 잡아서 보낸다 .
