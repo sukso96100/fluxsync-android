@@ -28,7 +28,8 @@ public class NotificationService : NotificationListenerService() {
 
 
         val currentItem = sbn?.notification?.extras
-
+        val currentActions = sbn!!.notification.actions
+//? 일경우 null 이면 실행을 안한고 !! 일 경우에는 실행을 한다.
 
         val title = currentItem?.get(EXTRA_TITLE)
         //이렇게하면 변수 sbn 에 해서 제목을 빼오고
@@ -41,10 +42,25 @@ public class NotificationService : NotificationListenerService() {
 
         val noti_id = currentItem?.get(EXTRA_NOTIFICATION_ID)
 
+
+        val actions = ArrayList<String>()
+        //배열 초기화 하는거
+        for (item in currentActions) {
+            actions.add(item.title.toString())
+        }
+        //스트링을 해서 타이틀만 따와서 배열로 만든다 .
+
+//배열이여서 쓴다
+
+
+
         var data = JSONObject()
         data.put("title", title)
         data.put("content", content)
         data.put("noti_id" , noti_id)
+        data.put("actinos", actions)
+
+        //엑션스 데이터 값을 넣는다.
 
         val mirrorIntent = Intent(Util.sendDataFilter)
 //        val mirrorIntent = Intent(this, ConnectionService::class.java)
