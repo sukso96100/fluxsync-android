@@ -47,6 +47,7 @@ class Util{
         }
 
         val connectionStatusFilter = "xyz.youngbin.fluxsync.CONNECTION_STATUS"
+        val notificationActionFilter = "xyz.youngbin.fluxsync.NOTIFICATION_ACTION"
         val connectionStatusCodes = arrayOf(
                 "preparing",
                 "scanning",

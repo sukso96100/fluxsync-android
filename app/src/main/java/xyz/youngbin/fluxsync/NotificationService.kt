@@ -1,13 +1,18 @@
 package xyz.youngbin.fluxsync
 
 import android.app.Notification.*
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
 
 public class NotificationService : NotificationListenerService() {
     lateinit var mLocalBM: LocalBroadcastManager
@@ -28,7 +33,10 @@ public class NotificationService : NotificationListenerService() {
 
 
         val currentItem = sbn?.notification?.extras
+        val currentActions = sbn!!.notification.actions
+//? 일경우 null 이면 실행을 안한고 !! 일 경우에는 실행을 한다.
 
+//        currentAction[1].actionIntent
 
         val title = currentItem?.get(EXTRA_TITLE)
         //이렇게하면 변수 sbn 에 해서 제목을 빼오고
@@ -38,13 +46,26 @@ public class NotificationService : NotificationListenerService() {
         //텍스트 부분으로 한다.
         //커맨드를 샌드로하고 컨테츠에다가 이 두개를 실어서 보내면 되는데 양식을 잡아서
         //제이슨 양식으로 해서 잡아서 보낸다 .
+        val noti_id = UUID.randomUUID().toString()
 
-        val noti_id = currentItem?.get(EXTRA_NOTIFICATION_ID)
+//        val noti_id = currentItem?.get(EXTRA_NOTIFICATION_ID)
+        val actions = JSONArray()
+
+        //배열 초기화 하는거
+        for (item in currentActions) {
+            actions.put(item.title.toString())
+        }
+        //스트링을 해서 타이틀만 따와서 배열로 만든다 .
+
+//배열이여서 쓴다
 
         var data = JSONObject()
         data.put("title", title)
         data.put("content", content)
         data.put("noti_id" , noti_id)
+        data.put("actions", actions)
+
+        //엑션스 데이터 값을 넣는다.
 
         val mirrorIntent = Intent(Util.sendDataFilter)
 //        val mirrorIntent = Intent(this, ConnectionService::class.java)
@@ -84,9 +105,30 @@ public class NotificationService : NotificationListenerService() {
 
 인자로 해서 컨텐츠 내용따서 그대로 하면 된다.
 */
+        var receiver = object : BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?){
+                if (noti_id==intent?.getStringExtra("noti_id")){
+                    currentActions[intent.getIntExtra("index", 0)].actionIntent.send()
+                    //currentActions 에서 인텐트에 index 값을 가져오는데  디폴트가 0 이고 펜딩인텐트 실행해주는 부분이다.
+                }
+                // ?는 널이면 실행 안하고 ! 는 오류
+                //여기 있는 noti_id 와 받아온 intent?.getStringExtra 와 같은지 비교하는 부분 입니다.
+//                else{
+//
+//                }
+                mLocalBM.unregisterReceiver(this)
+//안에서 intent 에 넣은거 두개 꺼내서 아이디값이 noti 아이디 값과 일치할 때
+// currnet랑 인덱스값이랑 펜딩인텐트 값 꺼내서 해주면 된다 ?
+            }
 
+        }
+        mLocalBM.registerReceiver(receiver, IntentFilter(Util.notificationActionFilter))
+
+        //로컬 브로드 캐스트 매니저 로서 util에 있는 필터를 꺼내서 리시버 해준다.
 
     }
+
+
 
     /*서비스가 시작 되면 이부분이 호출되고 이것이 인자안에 메세지를 뽑아가지고 서비스를 이어서
     send 해서 보내주면 된다.*/

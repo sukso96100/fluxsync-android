@@ -19,6 +19,7 @@ import xyz.youngbin.fluxsync.Util
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.*
 
 class ConnectionService : Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -70,6 +71,8 @@ class ConnectionService : Service() {
                                    broadcastStatus(4)
                                    mSocket.emit("test","TEST EMIT")
                                    mLocalBM.registerReceiver(sendDataReceiver, IntentFilter(Util.sendDataFilter))
+                                   this.setUpSocket()
+                                   //이부분에서 호출
                                })
                                .on("unauthorized", {
                                    // Unauthorized! cancel connection
@@ -109,6 +112,24 @@ class ConnectionService : Service() {
 
         return START_STICKY
     }
+
+    fun setUpSocket(){
+        mSocket.on("notify" ,{
+            it:Array<Any> ->
+            var obj = it[0] as JSONObject
+            Log.d("actions", obj.toString())
+            val intent = Intent(Util.notificationActionFilter)
+            intent.putExtra("noti_id", obj.getString("noti_id"))
+            intent.putExtra("index", obj.getInt("index"))
+
+            mLocalBM.sendBroadcast(intent)
+            //앱전체에 방송하는데 필터를 걸어서 방송을한다 . 그 필터를 설정한것을 리시버에서만 받는다.
+        })
+    }
+
+    //as는 캐스팅
+    // io 이벤트 받는 부분
+    // 코틀린에서는 any 가 자바 오브젝트랑 똑같다.
 
     override fun onDestroy() {
         super.onDestroy()
