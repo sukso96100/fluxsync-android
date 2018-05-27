@@ -7,6 +7,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import org.json.JSONArray
 import org.json.JSONObject
 
 public class NotificationService : NotificationListenerService() {
@@ -41,24 +42,21 @@ public class NotificationService : NotificationListenerService() {
         //제이슨 양식으로 해서 잡아서 보낸다 .
 
         val noti_id = currentItem?.get(EXTRA_NOTIFICATION_ID)
+        val actions = JSONArray()
 
-
-        val actions = ArrayList<String>()
         //배열 초기화 하는거
         for (item in currentActions) {
-            actions.add(item.title.toString())
+            actions.put(item.title.toString())
         }
         //스트링을 해서 타이틀만 따와서 배열로 만든다 .
 
 //배열이여서 쓴다
 
-
-
         var data = JSONObject()
         data.put("title", title)
         data.put("content", content)
         data.put("noti_id" , noti_id)
-        data.put("actinos", actions)
+        data.put("actions", actions)
 
         //엑션스 데이터 값을 넣는다.
 
