@@ -3,7 +3,10 @@ package xyz.youngbin.fluxsync.connect
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.AsyncTask
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
@@ -16,6 +19,7 @@ import xyz.youngbin.fluxsync.Util
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.*
 
 class ConnectionService : Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -27,15 +31,23 @@ class ConnectionService : Service() {
     lateinit var mLocalBM: LocalBroadcastManager
     var connected: Boolean = false
 
-
+    val sendDataReceiver = object: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d("ConnectionService","Sending data")
+            val eventName = intent!!.getStringExtra("eventName") // 두가지 변수를 만들어 주고 들어갈 것을 지정 해준다. 커맨드를 eventName 으로 하고
+            val content = intent.getStringExtra("content")      //
+            mSocket.emit(eventName, content)// 그냥 소켓이름에 들어갈 것 두가지
+        }
+    }
     override fun onCreate() {
         super.onCreate()
         Log.d("ConnectionService","Creating Service...")
         mLocalBM = LocalBroadcastManager.getInstance(this)
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId) // 이쪽에서 인텐트 부분은 되어 있고
         Log.d("service","onstartcommand")
 
         val command = intent!!.getStringExtra("command")
@@ -44,6 +56,7 @@ class ConnectionService : Service() {
                 broadcastStatus(2)
                 mAddress = intent.getStringExtra("address")
                 if(!connected){
+                    if(!mAddress.contains("/")) { mAddress = "/${mAddress}"}
                     mSocket = IO.socket("http:/${mAddress}")
                     mSocket.connect()
                     mSocket.on("connect", {
@@ -57,6 +70,9 @@ class ConnectionService : Service() {
                                    Log.d("socket","Connected")
                                    broadcastStatus(4)
                                    mSocket.emit("test","TEST EMIT")
+                                   mLocalBM.registerReceiver(sendDataReceiver, IntentFilter(Util.sendDataFilter))
+                                   this.setUpSocket()
+                                   //이부분에서 호출
                                })
                                .on("unauthorized", {
                                    // Unauthorized! cancel connection
@@ -71,8 +87,24 @@ class ConnectionService : Service() {
                 mSocket.off()
                 stopSelf()
             }
-            "send" -> {
+            "send" -> { //커맨드가 send 이고 이 커맨드를 입력했을때
+                Log.d("ConnectionService","Sending data")
+                val eventName = intent.getStringExtra("eventName") // 두가지 변수를 만들어 주고 들어갈 것을 지정 해준다. 커맨드를 eventName 으로 하고
+                val content = intent.getStringExtra("content")      //
+                mSocket.emit(eventName, content)// 그냥 소켓이름에 들어갈 것 두가지
+//                var TokenIntent = Intent(this, TokenQRScannerActivity::class.java)
+//                var Send_intent = intent(createPackageContext(this), )
+//                Send_intent.putExtra("address",mDatas[position].address)
+//
+
+//            TokenIntent.putExtra("address", mDatas[position].address)
+//            startActivity(TokenIntent)
                 // Send Data using outputstream
+
+                //서비스 스타트를 해서 인텐트(데이터, 커맨드 처럼 )를 실어보낸다. disconnect 와 같음
+                //추가로 데스크탑에 전송할 메세지를 같이 보낸다.
+                //보낼 떄 emit 함수 사용  앞에가 이벤트 채널 뒤에가 실제 내용
+                //
             }
         }
 
@@ -80,6 +112,24 @@ class ConnectionService : Service() {
 
         return START_STICKY
     }
+
+    fun setUpSocket(){
+        mSocket.on("notify" ,{
+            it:Array<Any> ->
+            var obj = it[0] as JSONObject
+            Log.d("actions", obj.toString())
+            val intent = Intent(Util.notificationActionFilter)
+            intent.putExtra("noti_id", obj.getString("noti_id"))
+            intent.putExtra("index", obj.getInt("index"))
+
+            mLocalBM.sendBroadcast(intent)
+            //앱전체에 방송하는데 필터를 걸어서 방송을한다 . 그 필터를 설정한것을 리시버에서만 받는다.
+        })
+    }
+
+    //as는 캐스팅
+    // io 이벤트 받는 부분
+    // 코틀린에서는 any 가 자바 오브젝트랑 똑같다.
 
     override fun onDestroy() {
         super.onDestroy()

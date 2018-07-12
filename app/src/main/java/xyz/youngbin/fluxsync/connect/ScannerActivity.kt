@@ -95,7 +95,7 @@ class ScannerActivity : AppCompatActivity() {
             val position = list.getChildAdapterPosition(v)
             Log.d("Device",mDatas[position].name)
             var connectIntent = Intent(this, ConnectActivity::class.java)
-            connectIntent.putExtra("id", mDatas[position].remoteId)
+            connectIntent.putExtra("id", mDatas[position].remoteId) //mdatas 로 하고 한 것은 정확히 알아야 될 값을 알아야 하기 때문이다.
             connectIntent.putExtra("address", mDatas[position].address)
             connectIntent.putExtra("name", mDatas[position].name)
             startActivity(connectIntent)
@@ -113,6 +113,14 @@ class ScannerActivity : AppCompatActivity() {
                 scanDevices()
             }
         }
+        //
+
+        connect_manual.setOnClickListener {
+            var tokenIntent =  Intent(this, TokenQRScannerActivity::class.java) // 엑티비티 부분이라 this 하면된다.
+            tokenIntent.putExtra("isManual", true) // 뒤에 값 부분은 딱히 나타낼 필요없이 true 정도로만 나누면 된다.
+            startActivity(tokenIntent) //액티비티 시작
+
+        }//이
 
         //Check if wifi is on
         val mWifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager

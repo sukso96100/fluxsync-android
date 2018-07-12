@@ -34,6 +34,8 @@
 
     <string name="cancel">Cancel</string>
     <string name="refresh">Refresh</string>
+    <string name="connect_manual">connect manual</string>
+
 
     <string name="permission_camera">To scan qr code, camera permission is required.</string>
 
@@ -42,4 +44,5 @@
 
     <string name="no_device">No connected device yet</string>
     <string name="device_connected">Connected</string>
+
 </resources>
