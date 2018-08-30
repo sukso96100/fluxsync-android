@@ -37,7 +37,7 @@ public class NotificationService : NotificationListenerService() {
         val currentActions = sbn!!.notification.actions
 //? 일경우 null 이면 실행을 안한고 !! 일 경우에는 실행을 한다.
 
-//        currentAction[1].actionIntent
+//        currentActions[1].actionIntent
 
         val title = currentItem?.get(EXTRA_TITLE)
         //이렇게하면 변수 sbn 에 해서 제목을 빼오고
@@ -69,13 +69,13 @@ public class NotificationService : NotificationListenerService() {
         //엑션스 데이터 값을 넣는다.
 
         val mirrorIntent = Intent(Util.sendDataFilter)
-//        val mirrorIntent = Intent(this, ConnectionService::class.java)
+
         mirrorIntent.putExtra("command", "send")//커맨드로 send 할 때 아래부분을 같이 보낸다는 뜻으로 쓴다.
         mirrorIntent.putExtra("eventName", "notify") //connection Service 부분에 있는 커넥 부분에 있는걸 받아서 보낸다 .
         mirrorIntent.putExtra("content" , data.toString()) //내용을 문자열로 해서 보내는 것 !
-        Log.d("NotificationService", data.toString())
+        Log.d("2NotificationService", data.toString())
         Log.d("NotificationService","calling startService ...")
-//        startService(mirrorIntent) // 이 함수가 호출되지 않음
+
         mLocalBM.sendBroadcast(mirrorIntent)
         Log.d("NotificationService","... calling startService")
         //json 쓴 걸 문자열로 바꿔주는 기능   자바에서 객체였는데 그걸 문자열로 바꾸는것 이쪽부분에 intent 해주면 된다 .
@@ -116,11 +116,11 @@ public class NotificationService : NotificationListenerService() {
                     currentActions[intent.getIntExtra("index", 0)].actionIntent.send()
                     //currentActions 에서 인텐트에 index 값을 가져오는데  디폴트가 0 이고 펜딩인텐트 실행해주는 부분이다.
                 }
-                // ?는 널이면 실행 안하고 ! 는 오류
-                //여기 있는 noti_id 와 받아온 intent?.getStringExtra 와 같은지 비교하는 부분 입니다.
-//                else{
-//
-//                }
+//                 ?는 널이면 실행 안하고 ! 는 오류
+//                여기 있는 noti_id 와 받아온 intent?.getStringExtra 와 같은지 비교하는 부분 입니다.
+                else{
+
+                }
                 mLocalBM.unregisterReceiver(this)
 //안에서 intent 에 넣은거 두개 꺼내서 아이디값이 noti 아이디 값과 일치할 때
 // currnet랑 인덱스값이랑 펜딩인텐트 값 꺼내서 해주면 된다 ?
